@@ -7,7 +7,7 @@ import java.util.UUID;
  *
  * Package com.bmoellerit.akkahello.domain
  */
-public class Transaction {
+public final class Transaction {
   private UUID uuid;
   private long price;
 
