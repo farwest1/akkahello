@@ -5,6 +5,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.bmoellerit.akkahello.domain.Transaction;
+import java.util.UUID;
 
 /**
  * Created by Bernd on 17.02.2019.
@@ -31,8 +33,14 @@ public class MyFirstActor extends AbstractActor {
         .matchEquals(
             "printit",
             p -> {
-              ActorRef secondRef = getContext().actorOf(Props.empty(), "second-actor");
-              System.out.println("Second: " + secondRef);
+              //ActorRef secondRef = getContext().actorOf(Props.empty(), "second-actor");
+              getSender().tell("Rhabarb", getSelf());
+              log.info("Message {} processed", "printit");
+            })
+        .matchEquals(
+            "trans",
+            p -> {
+              getSender().tell(new Transaction(UUID.randomUUID(), 100L), getSelf());
             })
         .build();
   }
