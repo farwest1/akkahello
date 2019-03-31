@@ -5,6 +5,7 @@ import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.bmoellerit.akkahello.domain.Transaction;
+import com.bmoellerit.akkahello.domain.Transaction.TTYPE;
 import java.util.UUID;
 
 /**
@@ -14,9 +15,9 @@ import java.util.UUID;
  */
 public class MyFirstActor extends AbstractActor {
 
-  LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
+  private LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 
-  static Props props() {
+  public static Props props() {
 
     return Props.create(MyFirstActor.class);
   }
@@ -39,7 +40,7 @@ public class MyFirstActor extends AbstractActor {
         .matchEquals(
             "trans",
             p -> {
-              getSender().tell(Transaction.getTransaction(UUID.randomUUID(), 100L), getSelf());
+              getSender().tell(Transaction.getTransaction(UUID.randomUUID(), 100L, TTYPE.ENTRY), getSelf());
             })
         .build();
   }

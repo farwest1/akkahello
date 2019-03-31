@@ -18,9 +18,11 @@ import akka.stream.ActorMaterializer;
 import akka.stream.Materializer;
 import akka.stream.javadsl.Flow;
 import akka.stream.javadsl.Source;
+import com.bmoellerit.akkahello.actors.Customer;
 import com.bmoellerit.akkahello.actors.MyFirstActor;
 import com.bmoellerit.akkahello.domain.Item;
 import com.bmoellerit.akkahello.domain.Transaction;
+import com.bmoellerit.akkahello.domain.Transaction.TTYPE;
 import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -91,9 +93,18 @@ public class AkkaHelloApp extends AllDirectives {
               CompletionStage<Object> futureTrans = getTransaction();
               return onSuccess(futureTrans, tr -> completeOK((Transaction) tr, Jackson.marshaller()) );
             })
+        ),
+        post(
+            ()-> path("trans", () -> {
+              ActorRef customer = system.actorOf(Customer.props());
+              customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L, TTYPE.ENTRY), ActorRef.noSender());
+              return complete("Transaction received");
+            })
         )
     );
   }
+
+
 
   private CompletionStage<Object> askActor(ActorRef act){
     return ask(act,"printit",Duration.ofMillis(1000L)).toCompletableFuture();

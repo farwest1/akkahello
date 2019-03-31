@@ -8,16 +8,22 @@ import java.util.UUID;
  * Package com.bmoellerit.akkahello.domain
  */
 public final class Transaction {
-  private UUID uuid;
-  private long price;
 
-  public static Transaction getTransaction(UUID uuid, long price){
-    return new Transaction(uuid,price);
+  public enum TTYPE {ENTRY,EXIT}
+
+  private final UUID uuid;
+  private final long price;
+  private final TTYPE ttype;
+
+
+  public static Transaction getTransaction(UUID uuid, long price, TTYPE ttype){
+    return new Transaction(uuid,price,ttype);
   }
 
-  private Transaction(UUID uuid, long price) {
+  private Transaction(UUID uuid, long price,TTYPE ttype) {
     this.uuid = uuid;
     this.price = price;
+    this.ttype = ttype;
   }
 
   public UUID getUuid() {
@@ -26,5 +32,9 @@ public final class Transaction {
 
   public long getPrice() {
     return price;
+  }
+
+  public TTYPE getTtype() {
+    return ttype;
   }
 }
