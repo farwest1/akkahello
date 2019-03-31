@@ -1,7 +1,6 @@
-package com.bmoellerit.akkahello;
+package com.bmoellerit.akkahello.actors;
 
 import akka.actor.AbstractActor;
-import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -40,7 +39,7 @@ public class MyFirstActor extends AbstractActor {
         .matchEquals(
             "trans",
             p -> {
-              getSender().tell(new Transaction(UUID.randomUUID(), 100L), getSelf());
+              getSender().tell(Transaction.getTransaction(UUID.randomUUID(), 100L), getSelf());
             })
         .build();
   }

@@ -11,7 +11,11 @@ public final class Transaction {
   private UUID uuid;
   private long price;
 
-  public Transaction(UUID uuid, long price) {
+  public static Transaction getTransaction(UUID uuid, long price){
+    return new Transaction(uuid,price);
+  }
+
+  private Transaction(UUID uuid, long price) {
     this.uuid = uuid;
     this.price = price;
   }
