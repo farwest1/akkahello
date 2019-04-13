@@ -13,17 +13,16 @@ public final class Transaction {
 
   private final UUID uuid;
   private final long price;
-  private final TTYPE ttype;
 
 
-  public static Transaction getTransaction(UUID uuid, long price, TTYPE ttype){
-    return new Transaction(uuid,price,ttype);
+
+  public static Transaction getTransaction(UUID uuid, long price){
+    return new Transaction(uuid,price);
   }
 
-  private Transaction(UUID uuid, long price,TTYPE ttype) {
+  private Transaction(UUID uuid, long price) {
     this.uuid = uuid;
     this.price = price;
-    this.ttype = ttype;
   }
 
   public UUID getUuid() {
@@ -34,7 +33,4 @@ public final class Transaction {
     return price;
   }
 
-  public TTYPE getTtype() {
-    return ttype;
-  }
 }

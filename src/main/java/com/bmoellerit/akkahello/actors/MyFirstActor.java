@@ -40,7 +40,7 @@ public class MyFirstActor extends AbstractActor {
         .matchEquals(
             "trans",
             p -> {
-              getSender().tell(Transaction.getTransaction(UUID.randomUUID(), 100L, TTYPE.ENTRY), getSelf());
+              getSender().tell(Transaction.getTransaction(UUID.randomUUID(), 100L), getSelf());
             })
         .build();
   }

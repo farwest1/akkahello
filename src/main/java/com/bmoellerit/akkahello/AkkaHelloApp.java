@@ -96,8 +96,8 @@ public class AkkaHelloApp extends AllDirectives {
         ),
         post(
             ()-> path("trans", () -> {
-              ActorRef customer = system.actorOf(Customer.props());
-              customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L, TTYPE.ENTRY), ActorRef.noSender());
+              ActorRef customer = system.actorOf(Customer.props("customer-1"));
+              customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L), ActorRef.noSender());
               return complete("Transaction received");
             })
         )
