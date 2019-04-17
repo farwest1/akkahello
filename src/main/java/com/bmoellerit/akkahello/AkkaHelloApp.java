@@ -2,6 +2,7 @@ package com.bmoellerit.akkahello;
 
 import static akka.pattern.Patterns.ask;
 import static akka.event.Logging.InfoLevel;
+import static akka.http.javadsl.server.PathMatchers.longSegment;
 
 import akka.NotUsed;
 import akka.actor.ActorRef;
@@ -19,6 +20,7 @@ import akka.stream.Materializer;
 import akka.stream.javadsl.Flow;
 import akka.stream.javadsl.Source;
 import com.bmoellerit.akkahello.actors.Customer;
+import com.bmoellerit.akkahello.actors.CustomerSupervisor;
 import com.bmoellerit.akkahello.actors.MyFirstActor;
 import com.bmoellerit.akkahello.domain.Item;
 import com.bmoellerit.akkahello.domain.Transaction;
@@ -42,12 +44,13 @@ public class AkkaHelloApp extends AllDirectives {
 
 
   public static void main(String[] args) throws java.io.IOException{
-    system = ActorSystem.create();
+    system = ActorSystem.create("CustomerSystem");
     final Http http = Http.get(system);
     Materializer materializer = ActorMaterializer.create(system);
     final Source<Integer, NotUsed> source = Source.range(1,1000);
 
     ActorRef myFirstActorRef = system.actorOf(MyFirstActor.props());
+    ActorRef customerSupervisorRef = system.actorOf(CustomerSupervisor.props());
 
     //In order to access all directives we need an instance where the routes are define.
     AkkaHelloApp app = new AkkaHelloApp();
@@ -95,11 +98,12 @@ public class AkkaHelloApp extends AllDirectives {
             })
         ),
         post(
-            ()-> path("trans", () -> {
-              ActorRef customer = system.actorOf(Customer.props("customer-1"));
-              customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L), ActorRef.noSender());
-              return complete("Transaction received");
-            })
+            ()-> pathPrefix("trans", () ->
+              path(longSegment(), (Long id) ->{
+                ActorRef customer = system.actorOf(Customer.props("customer-" + id.toString()));
+                customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L), ActorRef.noSender());
+                return complete("Transaction received");
+            }))
         )
     );
   }
