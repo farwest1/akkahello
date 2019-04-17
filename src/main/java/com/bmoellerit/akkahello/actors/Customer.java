@@ -4,6 +4,7 @@ import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import akka.persistence.AbstractPersistentActor;
+import com.bmoellerit.akkahello.actors.CustomerEvent.TTYPE;
 import com.bmoellerit.akkahello.domain.Transaction;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,12 +17,14 @@ import java.util.ArrayList;
 
 class CustomerEvent implements Serializable {
 
+  public enum TTYPE {ENTRY,EXIT};
   private static final long serialVersionUID = 1L;
+  private final TTYPE ttype;
   private final String data;
 
-
-  public CustomerEvent(String data) {
+  public CustomerEvent(String data, TTYPE ttype) {
     this.data = data;
+    this.ttype = ttype;
   }
 
   public String getData() {
@@ -83,7 +86,7 @@ public class Customer extends AbstractPersistentActor {
     return receiveBuilder()
         .match(Transaction.class, transaction -> {
           log.info("Received transaction");
-          final CustomerEvent customerEvent = new CustomerEvent("Bla");
+          final CustomerEvent customerEvent = new CustomerEvent("Bla", TTYPE.ENTRY);
           persist(customerEvent, (CustomerEvent e) -> {
 
             getContext().getSystem().getEventStream().publish(e);
