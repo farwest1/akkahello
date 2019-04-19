@@ -100,6 +100,7 @@ public class AkkaHelloApp extends AllDirectives {
         post(
             ()-> pathPrefix("trans", () ->
               path(longSegment(), (Long id) ->{
+                //TODO create customer actors depending on the id and register them in an supervisor
                 ActorRef customer = system.actorOf(Customer.props("customer-" + id.toString()));
                 customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L), ActorRef.noSender());
                 return complete("Transaction received");
