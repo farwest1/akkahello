@@ -13,16 +13,18 @@ public final class Transaction {
 
   private final UUID uuid;
   private final long price;
+  private final long customerId;
 
 
 
-  public static Transaction getTransaction(UUID uuid, long price){
-    return new Transaction(uuid,price);
+  public static Transaction getTransaction(long customerId, long price){
+    return new Transaction(customerId,price);
   }
 
-  private Transaction(UUID uuid, long price) {
-    this.uuid = uuid;
+  private Transaction(long customerId, long price) {
+    this.uuid = UUID.randomUUID();
     this.price = price;
+    this.customerId = customerId;
   }
 
   public UUID getUuid() {
@@ -33,4 +35,7 @@ public final class Transaction {
     return price;
   }
 
+  public long getCustomerId() {
+    return customerId;
+  }
 }

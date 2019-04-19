@@ -55,7 +55,7 @@ public class AkkaHelloApp extends AllDirectives {
     //In order to access all directives we need an instance where the routes are define.
     AkkaHelloApp app = new AkkaHelloApp();
 
-    final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = app.createRoute(myFirstActorRef).flow(system, materializer);
+    final Flow<HttpRequest, HttpResponse, NotUsed> routeFlow = app.createRoute(myFirstActorRef,customerSupervisorRef).flow(system, materializer);
     final CompletionStage<ServerBinding> binding = http.bindAndHandle(routeFlow,
         ConnectHttp.toHost("localhost", 8080), materializer);
 
@@ -68,7 +68,7 @@ public class AkkaHelloApp extends AllDirectives {
 
   }
 
-  private Route createRoute(ActorRef myFirstActor) {
+  private Route createRoute(ActorRef myFirstActor, ActorRef customerSupervisorRef) {
 //    return concat(
 //        path("item", ()-> get(()-> completeOK(new Item(UUID.randomUUID(),"Test"),
 //            Jackson.marshaller()))));
@@ -100,9 +100,7 @@ public class AkkaHelloApp extends AllDirectives {
         post(
             ()-> pathPrefix("trans", () ->
               path(longSegment(), (Long id) ->{
-                //TODO create customer actors depending on the id and register them in an supervisor
-                ActorRef customer = system.actorOf(Customer.props("customer-" + id.toString()));
-                customer.tell(Transaction.getTransaction(UUID.randomUUID(),100L), ActorRef.noSender());
+                customerSupervisorRef.tell(Transaction.getTransaction(id,100L), ActorRef.noSender());
                 return complete("Transaction received");
             }))
         )
